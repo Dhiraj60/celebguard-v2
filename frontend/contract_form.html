@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>➕ Add New Contract | CelebGuard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+    }
+  </script>
+</head>
+<body class="bg-gray-100 dark:bg-gray-900 min-h-screen text-gray-800 dark:text-gray-100 font-sans transition-colors duration-300">
+
+  <!-- 🌐 Navbar -->
+  <nav class="bg-white dark:bg-gray-800 shadow-md p-4 flex justify-between items-center">
+    <h1 class="text-2xl font-bold text-blue-600 dark:text-blue-400">🛡️ CelebGuard</h1>
+    <div class="space-x-4">
+      <a href="/" class="text-gray-700 dark:text-gray-200 hover:text-blue-600 dark:hover:text-blue-400 font-medium">📋 All Contracts</a>
+      <a href="/contract_form" class="text-green-600 hover:underline font-medium">➕ Add Contract</a>
+      <button onclick="toggleDarkMode()" class="ml-4 px-3 py-1 rounded bg-gray-200 dark:bg-gray-700 text-sm hover:bg-gray-300 dark:hover:bg-gray-600 transition">🌓 Toggle Dark</button>
+    </div>
+  </nav>
+
+  <!-- 📋 Contract Form -->
+  <main class="max-w-xl mx-auto mt-10 bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg animate-fadeIn">
+    <h2 class="text-xl font-semibold mb-6">➕ Enter New Brand Contract</h2>
+    <form id="contractForm" class="space-y-4">
+      <div>
+        <label class="block mb-1 font-medium">Client Name</label>
+        <input type="text" id="client_name" required class="w-full border dark:border-gray-700 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-300 dark:bg-gray-700 dark:text-white" placeholder="e.g., Virat Kohli">
+      </div>
+
+      <div>
+        <label class="block mb-1 font-medium">Brand Name</label>
+        <input type="text" id="brand_name" required class="w-full border dark:border-gray-700 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-300 dark:bg-gray-700 dark:text-white" placeholder="e.g., Puma">
+      </div>
+
+      <div>
+        <label class="block mb-1 font-medium">Content Link</label>
+        <input type="url" id="content_link" required class="w-full border dark:border-gray-700 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-300 dark:bg-gray-700 dark:text-white" placeholder="Instagram/YouTube URL">
+      </div>
+
+      <div>
+        <label class="block mb-1 font-medium">Content Type</label>
+        <select id="content_type" class="w-full border dark:border-gray-700 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-300 dark:bg-gray-700 dark:text-white">
+          <option value="image">🖼️ Image</option>
+          <option value="video">🎥 Video</option>
+        </select>
+      </div>
+
+      <div>
+        <label class="block mb-1 font-medium">Start Date</label>
+        <input type="date" id="start_date" required class="w-full border dark:border-gray-700 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-300 dark:bg-gray-700 dark:text-white">
+      </div>
+
+      <div>
+        <label class="block mb-1 font-medium">Expiry Date</label>
+        <input type="date" id="expiry_date" required class="w-full border dark:border-gray-700 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-300 dark:bg-gray-700 dark:text-white">
+      </div>
+
+      <div>
+        <button type="submit" class="w-full bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700 transition">✅ Submit Contract</button>
+      </div>
+    </form>
+  </main>
+
+  <script>
+    function toggleDarkMode() {
+      document.documentElement.classList.toggle('dark');
+    }
+
+    document.getElementById('contractForm').addEventListener('submit', async function (e) {
+      e.preventDefault();
+      const data = {
+        client_name: document.getElementById('client_name').value,
+        brand_name: document.getElementById('brand_name').value,
+        content_link: document.getElementById('content_link').value,
+        content_type: document.getElementById('content_type').value,
+        start_date: document.getElementById('start_date').value,
+        expiry_date: document.getElementById('expiry_date').value
+      };
+
+      const res = await fetch('/add_contract', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+      });
+
+      const result = await res.json();
+      alert("✅ Contract Added: " + result.data.client_name + " - " + result.data.brand_name);
+      window.location.href = "/";
+    });
+  </script>
+
+  <style>
+    .animate-fadeIn {
+      animation: fadeIn 0.8s ease-in-out;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+
+</body>
+</html>

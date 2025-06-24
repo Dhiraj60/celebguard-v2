@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>🛡️ CelebGuard Dashboard</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 min-h-screen text-gray-800">
+  <!-- Navbar -->
+  <nav class="bg-white shadow p-4 flex justify-between items-center">
+    <h1 class="text-xl font-bold">🛡️ CelebGuard</h1>
+    <div>
+      <a href="/" class="mr-4 text-blue-600 hover:underline">All Contracts</a>
+      <a href="/contract_form" class="text-green-600 hover:underline">➕ Add Contract</a>
+    </div>
+  </nav>
+
+  <!-- Content -->
+  <div class="p-6">
+    <h2 class="text-2xl font-semibold mb-4">📋 All Contracts</h2>
+    <div id="contractsList" class="space-y-4"></div>
+  </div>
+
+  <script>
+    async function loadContracts() {
+      const res = await fetch('/check_all_status');
+      const data = await res.json();
+
+      const container = document.getElementById('contractsList');
+      container.innerHTML = '';
+
+      data.contracts.forEach(contract => {
+        const expired = contract.status === "expired";
+        const stillLive = contract.still_live;
+
+        const badge = expired && stillLive
+          ? '<span class="text-xs bg-red-100 text-red-700 px-2 py-1 rounded">🔴 Violation</span>'
+          : '<span class="text-xs bg-green-100 text-green-700 px-2 py-1 rounded">✅ Clean</span>';
+
+        const el = `
+          <div class="bg-white p-4 rounded shadow flex justify-between items-center">
+            <div>
+              <div class="font-semibold">${contract.client_name} - ${contract.brand_name}</div>
+              <div class="text-sm text-gray-600">${contract.start_date} ➡ ${contract.expiry_date}</div>
+            </div>
+            ${badge}
+          </div>`;
+        container.innerHTML += el;
+      });
+    }
+
+    loadContracts();
+  </script>
+</body>
+</html>

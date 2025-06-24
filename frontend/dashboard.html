@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>🛡️ CelebGuard Dashboard</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class'
+    }
+  </script>
+</head>
+<body class="bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-100 min-h-screen">
+  <!-- Navbar -->
+  <nav class="bg-white dark:bg-gray-800 shadow p-4 flex justify-between items-center">
+    <h1 class="text-2xl font-bold">🛡️ CelebGuard</h1>
+    <div class="flex items-center gap-4">
+      <a href="/" class="text-blue-600 hover:underline dark:text-blue-400">📋 All Contracts</a>
+      <a href="/contract_form" class="text-green-600 hover:underline dark:text-green-400">➕ Add Contract</a>
+      <button onclick="document.documentElement.classList.toggle('dark')" class="text-sm px-2 py-1 border rounded">🌓</button>
+    </div>
+  </nav>
+
+  <!-- Main Content -->
+  <main class="p-6">
+    <h2 class="text-2xl font-semibold mb-6">All Brand Contracts</h2>
+    <div id="contractsList" class="grid gap-4 lg:grid-cols-2"></div>
+  </main>
+
+  <script>
+    async function loadContracts() {
+      const res = await fetch('/check_all_status');
+      const data = await res.json();
+      const container = document.getElementById('contractsList');
+      container.innerHTML = '';
+
+      data.contracts.forEach(c => {
+        const expired = c.status === "expired";
+        const stillLive = c.still_live;
+        const badge = expired && stillLive
+          ? '<span class="text-xs font-medium bg-red-100 text-red-700 px-2 py-1 rounded">🔴 Violation</span>'
+          : '<span class="text-xs font-medium bg-green-100 text-green-700 px-2 py-1 rounded">✅ Clean</span>';
+
+        const card = `
+          <div class="bg-white dark:bg-gray-800 p-4 rounded-lg shadow hover:shadow-lg transition">
+            <div class="flex justify-between items-center">
+              <div>
+                <h3 class="text-lg font-bold">${c.client_name} - ${c.brand_name}</h3>
+                <p class="text-sm text-gray-600 dark:text-gray-400">${c.start_date} ➡ ${c.expiry_date}</p>
+              </div>
+              ${badge}
+            </div>
+            <a href="${c.content_link}" target="_blank" class="text-sm text-blue-500 hover:underline mt-2 inline-block">🔗 View Content</a>
+          </div>`;
+        container.innerHTML += card;
+      });
+    }
+
+    loadContracts();
+  </script>
+</body>
+</html>
